@@ -11,7 +11,7 @@ def inicializar_banco(conexao):
     CREATE TABLE IF NOT EXISTS Usuario ( 
       id_usuario INT PRIMARY KEY AUTO_INCREMENT,   
       nome VARCHAR(40) NOT NULL,   
-      email VARCHAR(40) NOT NULL,   
+      email VARCHAR(40) NOT NULL UNIQUE,   
       senha VARCHAR(40) NOT NULL,   
       admin INT NOT NULL DEFAULT '0'   
     ); 
@@ -40,6 +40,9 @@ def inicializar_banco(conexao):
       id_usuario INT,
       FOREIGN KEY(id_usuario) REFERENCES Usuario (id_usuario)
     );
+
+    INSERT IGNORE INTO Usuario (nome, email, senha, admin)
+    VALUES ('admin', 'admin@email.com', '1234', 1);
     """
     
     print("Iniciando inicialização do banco de dados...")

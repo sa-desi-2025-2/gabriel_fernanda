@@ -19,21 +19,22 @@
     <div class="divGrandona">      
         <div class="card">
             <h2 class="mb-3">Acesso</h2>
-            <form>
-            <div class="mb-3 text-start">
-                <label for="usuario" class="form-label">Nome de usuário:</label>
-                <input type="text" class="form-control" id="usuario" placeholder="Digite seu nome">
-            </div>
-        
-            <div class="mb-3 text-start">
-                <label for="senha" class="form-label">Senha:</label>
-                <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
-            </div>
-        
-            <p class="small text-start">
-                Ainda não tem uma conta? <a href="#">Cadastre-se</a>
-            </p>
-            <button type="submit" class="btn btn-primary botaoAcesso cor">Entrar</button>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3 text-start">
+                    <label for="usuario" class="form-label">Nome de usuário:</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu nome">
+                </div>
+            
+                <div class="mb-3 text-start">
+                    <label for="senha" class="form-label">Senha:</label>
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha">
+                </div>
+            
+                <p class="small text-start">
+                    Ainda não tem uma conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a>
+                </p>
+            
+                <button type="submit" class="btn btn-primary botaoAcesso cor">Entrar</button>
             </form>
         </div>
     </div>
