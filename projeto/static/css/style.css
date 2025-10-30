@@ -1,0 +1,33 @@
+.cor {
+    background-color:#0D436B;
+    border-color: #092d49;
+}
+
+.cor:hover {
+    background-color:#12588d;
+}
+
+.cor:focus {
+    background-color:#0c426b;
+}
+
+.divGrandona {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 94vh;
+    background-color: #ffffff;
+}
+
+.card {
+    background-color: #e2e4e7;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    width: 400px;
+    text-align: center;
+}
+
+.botaoAcesso {
+    width: 340px;
+}
