@@ -2,10 +2,6 @@ from db_config import conectar_bd
 from mysql.connector import Error
 
 def inicializar_banco(conexao):
-    """
-    Executa o script SQL completo para criar o banco de dados,
-    as tabelas e as relações (Foreign Keys).
-    """
     
     script_sql_completo = """
     CREATE DATABASE IF NOT EXISTS MapaInterativo;
