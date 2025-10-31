@@ -6,6 +6,43 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>teste</h1>
+    <nav class="navbar bg-body-tertiary, cor">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-auto" href="#">
+                <img src="../static/img/logo.png" alt="Logo" width="100" height="30" class="d-inline-block align-text-top">
+            </a>
+        </div>
+    </nav>
+    <div class="divGrandona">      
+        <div class="card fonte fonteCinza">
+            <h2 class="mb-3">Cadastro</h2>
+            <form method="POST" action="{{ url_for('cadastro') }}">
+                <div class="mb-3 text-start">
+                    <label for="usuario" class="form-label">Nome de usuário:</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu nome">
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu email">
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label for="senha" class="form-label">Senha:</label>
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha">
+                </div>
+                <div class="mb-3 text-start">
+                    <label for="confirmar" class="form-label">Confirmar senha:</label>
+                    <input type="password" class="form-control" id="confirmar" name="confirmar" placeholder="Confirme sua senha">
+                </div>
+
+                <p class="small text-start">
+                    Já tem uma conta? <a href="{{ url_for('login') }}">Login</a>
+                </p>
+
+                <button type="submit" class="btn btn-primary botaoAcesso cor">Entrar</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
