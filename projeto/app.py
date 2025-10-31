@@ -44,8 +44,43 @@ def login():
 def tela_inicial():   
     return render_template('tela_inicial.html')
 
-@app.route('/cadastro')  
+@app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
+    if request.method == 'POST':
+        nome = request.form.get('usuario', '').strip()
+        email = request.form.get('email', '').strip()
+        senha = request.form.get('senha', '')
+        confirmar = request.form.get('confirmar', '')
+
+        if not nome or not email or not senha:
+            flash('Preencha todos os campos.')
+            return redirect(url_for('cadastro'))
+
+        if senha != confirmar:
+            flash('As senhas não coincidem.')
+            return redirect(url_for('cadastro'))
+
+        try:
+            conexao = conectar_bd()
+            cursor = conexao.cursor()
+            cursor.execute("SELECT id_usuario FROM Usuario WHERE nome = %s OR email = %s", (nome, email))
+            if cursor.fetchone():
+                flash('Nome de usuário ou email já cadastrado.')
+                return redirect(url_for('cadastro'))
+
+            cursor.execute("INSERT INTO Usuario (nome, email, senha) VALUES (%s, %s, %s)", (nome, email, senha))
+            conexao.commit()
+            flash('Cadastro realizado com sucesso!')
+            return redirect(url_for('login'))
+        except Error as e:
+            flash(f"Erro ao cadastrar usuário: {e}")
+        finally:
+            try:
+                cursor.close()
+                conexao.close()
+            except:
+                pass
+
     return render_template('cadastro.html')
 
 if __name__ == '__main__':

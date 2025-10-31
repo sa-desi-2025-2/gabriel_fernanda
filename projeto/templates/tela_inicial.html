@@ -1,11 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mapa Whirlpool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
+        #map {
+            height: 90vh;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .popup-buttons button {
+            margin: 2px;
+            padding: 5px;
+            cursor: pointer;
+            background-color: #0D436B;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .popup-buttons button:hover {
+            background-color: #1f5c8d;
+        }
+        .legenda-custom {
+            font-family: "Nunito Sans", sans-serif;
+            background: none;
+            color: #0D436B;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1;
+            width: 140px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            text-align: center;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>teste</h1>
+    <nav class="navbar bg-body-tertiary cor">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-auto" href="#">
+                <img src="../static/img/logo.png" alt="Logo" width="100" height="30" class="d-inline-block align-text-top">
+            </a>
+        </div>
+    </nav>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <script>
+        var markers = {};
+
+        var bbox = [-48.874741, -26.252951, -48.863078, -26.245706];
+        var cantoSudoeste = L.latLng(bbox[1], bbox[0]);
+        var cantoNordeste = L.latLng(bbox[3], bbox[2]);
+        var bounds = L.latLngBounds(cantoSudoeste, cantoNordeste);
+
+        var map = L.map('map', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 15 
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        map.fitBounds(bounds);
+
+        L.rectangle(bounds, {color: "#0D436B", weight: 2, fillOpacity: 0.0}).addTo(map);
+
+        function createPopupContent(markerId, description) {
+            return `
+                <b>${description}</b>
+                <br>
+                <div class="popup-buttons" 
+                     onmousedown="L.DomEvent.stopPropagation(event)" 
+                     onclick="L.DomEvent.stopPropagation(event)">
+                    <button onclick="editMarker(${markerId})">Editar</button>
+                    <button onclick="removeMarker(${markerId})">Remover</button>
+                </div>
+            `;
+        }
+
+        function editMarker(markerId) {
+            var marker = markers[markerId];
+            if (!marker) return;
+
+            var newDescription = prompt("Editar descrição:", marker.myDescription);
+
+            if (newDescription !== null) {
+                marker.myDescription = newDescription;
+                marker.setPopupContent(createPopupContent(markerId, newDescription));
+            }
+        }
+
+        function removeMarker(markerId) {
+            var marker = markers[markerId];
+            if (!marker) return;
+            map.removeLayer(marker);
+            delete markers[markerId];
+        }
+
+        map.on('click', function(e) {
+            var newMarker = L.marker(e.latlng).addTo(map);
+            var markerId = newMarker._leaflet_id;
+
+            newMarker.myDescription = "Novo Ponto";
+            markers[markerId] = newMarker;
+
+            newMarker.bindPopup(createPopupContent(markerId, newMarker.myDescription));
+            newMarker.openPopup();
+        });
+
+        // Legendas dos setores
+        const setores = [
+            {nome: "Fábrica 2", lat: -26.25090, lng: -48.86950},
+            {nome: "Fábrica 3", lat: -26.24800, lng: -48.87150},
+            {nome: "Casa de Máquinas", lat: -26.24900, lng: -48.87020},
+            {nome: "Alameda", lat: -26.24990, lng: -48.87080},
+            {nome: "ADM", lat: -26.25010, lng: -48.87340}
+        ];
+
+        setores.forEach(setor => {
+            var legendaIcon = L.divIcon({
+                className: 'legenda-custom',
+                html: `<span>${setor.nome}</span>`,
+                iconSize: [120, 24],
+                iconAnchor: [60, 12]
+            });
+            L.marker([setor.lat, setor.lng], {icon: legendaIcon, interactive: false}).addTo(map);
+        });
+    </script>
 </body>
 </html>

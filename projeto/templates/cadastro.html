@@ -24,20 +24,25 @@
                     <label for="usuario" class="form-label">Nome de usuário:</label>
                     <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu nome">
                 </div>
-            
+
+                <div class="mb-3 text-start">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu email">
+                </div>
+
                 <div class="mb-3 text-start">
                     <label for="senha" class="form-label">Senha:</label>
                     <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha">
                 </div>
                 <div class="mb-3 text-start">
-                    <label for="senha" class="form-label">Confirmar senha:</label>
-                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha">
+                    <label for="confirmar" class="form-label">Confirmar senha:</label>
+                    <input type="password" class="form-control" id="confirmar" name="confirmar" placeholder="Confirme sua senha">
                 </div>
-            
+
                 <p class="small text-start">
                     Já tem uma conta? <a href="{{ url_for('login') }}">Login</a>
                 </p>
-            
+
                 <button type="submit" class="btn btn-primary botaoAcesso cor">Entrar</button>
             </form>
         </div>
