@@ -1,19 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+#body{
+    font-family: "Nunito Sans", sans-serif;
+}
+
 .cor {
     background-color:#0D436B;
     border-color: #0D436B;
-}
-
-.cor:hover {
-    background-color:#1f5c8d;
-    border-color: #1f5c8d;
 }
 
 .divGrandona {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 94vh;
+    height: 90vh;
     background-color: #ffffff;
 }
 
@@ -28,10 +28,14 @@
 
 .botaoAcesso {
     width: 340px;
+    background-color:#0D436B;
+    border-color: #0D436B;
 }
 
-.fonte{
-    font-family: "Nunito Sans", sans-serif;
+
+.botaoAcesso:hover {
+    background-color:#1f5c8d;
+    border-color: #1f5c8d;
 }
 
 .fontCinza{
@@ -74,4 +78,22 @@
     border: none;
     text-align: center;
     pointer-events: none;
+}
+
+.icon{
+    fill: rgb(255, 255, 255);
+    margin-left: 20px;
+}
+
+.linksNav{
+    color: #ffffff;
+    margin-left: 20px;
+    display: flex;
+    gap: 15px;
+    font-size: 17px;
+    
+}
+
+.divSolicitacao{
+    width: 600px;
 }
