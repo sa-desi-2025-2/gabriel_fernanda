@@ -30,7 +30,38 @@
         </div>
     </nav>
 
-    <div id="map"></div>
+    <div class="map-wrapper">
+        <div id="map"></div>
+
+        <!-- Legenda de tipos -->
+        <div class="map-legend" id="map-legend">
+            <div class="legend-title">Legenda</div>
+            <div class="legend-item"><span class="legend-color" style="background:#0D436B"></span> Ar Condicionado</div>
+            <div class="legend-item"><span class="legend-color" style="background:#1f9d4a"></span> Bebedouro</div>
+        </div>
+    </div>
+
+    <!-- Tabela de Marcadores -->
+    <div class="markers-table-container">
+        <h3>Pontos no Mapa</h3>
+        <table class="markers-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Defeito</th>
+                    <th>Local</th>
+                    <th>Descrição</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="markers-tbody">
+                <!-- Os marcadores serão adicionados aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -59,47 +90,279 @@
 
         L.rectangle(bounds, {color: "#0D436B", weight: 2, fillOpacity: 0.0}).addTo(map);
 
-        function createPopupContent(markerId, description) {
-            return `
-                <b>${description}</b>
-                <br>
-                <div class="popup-buttons" 
-                     onmousedown="L.DomEvent.stopPropagation(event)" 
-                     onclick="L.DomEvent.stopPropagation(event)">
-                    <button onclick="editMarker(${markerId})">Editar</button>
+        // Carregar pontos do banco de dados
+        async function carregarPontos() {
+            try {
+                const response = await fetch('/api/pontos');
+                const data = await response.json();
+                        if (data.pontos) {
+                            data.pontos.forEach(ponto => {
+                        const markerId = ponto.id_ponto;
+                        const newMarker = createStyledMarker(ponto.tipo, [ponto.latitude, ponto.longitude]).addTo(map);
+                        newMarker.myType = ponto.tipo || '';
+                        newMarker.myDefeito = ponto.defeito || '';
+                        newMarker.myLocal = ponto.local || '';
+                        newMarker.myDescription = ponto.descricao || '';
+                        markers[markerId] = newMarker;
+                        newMarker.bindPopup(createPopupContent(markerId, newMarker.myType, newMarker.myDefeito, newMarker.myLocal, newMarker.myDescription));
+                        addMarkerToTable(markerId, newMarker.myType, newMarker.myDefeito, newMarker.myLocal, newMarker.myDescription, ponto.latitude, ponto.longitude);
+                            });
+                        }
+            } catch (error) {
+                console.error('Erro ao carregar pontos:', error);
+            }
+        }
+
+        // Chamar função de carregamento quando a página carregar
+        carregarPontos();
+
+        function addMarkerToTable(markerId, type, defeito, local, description, lat, lng) {
+            var tbody = document.getElementById('markers-tbody');
+            var row = document.createElement('tr');
+            row.id = 'marker-row-' + markerId;
+            row.innerHTML = `
+                <td>${markerId}</td>
+                <td class="marker-type">${escapeHtml(type)}</td>
+                <td class="marker-defeito">${escapeHtml(defeito)}</td>
+                <td class="marker-local">${escapeHtml(local)}</td>
+                <td class="marker-description">${escapeHtml(description)}</td>
+                <td>${lat.toFixed(6)}</td>
+                <td>${lng.toFixed(6)}</td>
+                <td class="actions">
+                    <button onclick="openEditPopup(${markerId})">Editar</button>
                     <button onclick="removeMarker(${markerId})">Remover</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // Retorna cor por tipo
+        function getColorForType(tipo) {
+            if (!tipo) return '#0D436B';
+            if (tipo.toLowerCase().includes('ar')) return '#0D436B'; // Ar Condicionado -> azul
+            if (tipo.toLowerCase().includes('bebed')) return '#1f9d4a'; // Bebedouro -> verde
+            return '#6c757d'; // padrão cinza
+        }
+
+        // Cria um circleMarker estilizado com cor baseada no tipo
+        function createStyledMarker(tipo, latlng) {
+            const color = getColorForType(tipo);
+            return L.circleMarker(latlng, {
+                radius: 8,
+                color: color,
+                weight: 2,
+                fillColor: color,
+                fillOpacity: 0.9
+            });
+        }
+
+        function updateMarkerInTable(markerId, type, defeito, local, description) {
+            var row = document.getElementById('marker-row-' + markerId);
+            if (row) {
+                var typeCell = row.querySelector('.marker-type');
+                var defeitoCell = row.querySelector('.marker-defeito');
+                var localCell = row.querySelector('.marker-local');
+                var descCell = row.querySelector('.marker-description');
+                if (typeCell) typeCell.textContent = type;
+                if (defeitoCell) defeitoCell.textContent = defeito;
+                if (localCell) localCell.textContent = local;
+                if (descCell) descCell.textContent = description;
+            }
+        }
+
+        function removeMarkerFromTable(markerId) {
+            var row = document.getElementById('marker-row-' + markerId);
+            if (row) row.remove();
+        }
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return text.toString().replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m];});
+        }
+
+        // Abre um popup de edição com formulário para nome, tipo e descrição
+        function openEditPopup(markerId) {
+            var marker = markers[markerId];
+            if (!marker) return;
+            var html = `
+                <div class="popup-form">
+                    <div class="mb-1">
+                        <label class="form-label">Tipo</label>
+                        <select id="edit-type" class="form-control form-control-sm">
+                            <option value="Ar Condicionado" ${marker.myType==='Ar Condicionado'?'selected':''}>Ar Condicionado</option>
+                            <option value="Bebedouro" ${marker.myType==='Bebedouro'?'selected':''}>Bebedouro</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label">Defeito</label>
+                        <input id="edit-defeito" type="text" class="form-control form-control-sm" value="${escapeHtml(marker.myDefeito)}">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label">Local</label>
+                        <input id="edit-local" type="text" class="form-control form-control-sm" value="${escapeHtml(marker.myLocal)}">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label">Descrição (opcional)</label>
+                        <textarea id="edit-desc" class="form-control" rows="3">${escapeHtml(marker.myDescription)}</textarea>
+                    </div>
+                    <div class="popup-actions">
+                        <button id="cancel-edit" class="btn-sm btn-secondary">Cancelar</button>
+                        <button id="save-edit" class="btn-sm btn-primary">Salvar</button>
+                    </div>
+                </div>
+            `;
+            marker.bindPopup(html).openPopup();
+
+            setTimeout(() => {
+                document.getElementById('save-edit').addEventListener('click', async function() {
+                    const tipo = document.getElementById('edit-type').value.trim();
+                    const defeito = document.getElementById('edit-defeito').value.trim();
+                    const local = document.getElementById('edit-local').value.trim();
+                    const descricao = document.getElementById('edit-desc').value.trim();
+                    try {
+                        const resp = await fetch('/api/pontos', {
+                            method: 'PUT',
+                            headers: {'Content-Type':'application/json'},
+                            body: JSON.stringify({ id: markerId, tipo: tipo, defeito: defeito, local: local, descricao: descricao })
+                        });
+                        if (resp.ok) {
+                            marker.myType = tipo;
+                            marker.myDefeito = defeito;
+                            marker.myLocal = local;
+                            marker.myDescription = descricao;
+                            marker.setPopupContent(createPopupContent(markerId, tipo, defeito, local, descricao));
+                            updateMarkerInTable(markerId, tipo, defeito, local, descricao);
+                            marker.openPopup();
+                        } else {
+                            const err = await resp.json();
+                            alert('Erro ao atualizar: ' + (err.error||resp.status));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Erro ao atualizar o ponto.');
+                    }
+                });
+                document.getElementById('cancel-edit').addEventListener('click', function() {
+                    marker.closePopup();
+                });
+            }, 100);
+        }
+
+        // Abre um popup de criação com formulário e salva no servidor ao enviar
+        function openCreatePopup(latlng) {
+            var popup = L.popup()
+                .setLatLng(latlng)
+                .setContent(`
+                    <div class="popup-form">
+                        <div class="mb-1">
+                            <label class="form-label">Tipo</label>
+                            <select id="new-type" class="form-control form-control-sm">
+                                <option value="Ar Condicionado">Ar Condicionado</option>
+                                <option value="Bebedouro">Bebedouro</option>
+                            </select>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Defeito</label>
+                            <input id="new-defeito" type="text" class="form-control form-control-sm">
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Local</label>
+                            <input id="new-local" type="text" class="form-control form-control-sm">
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Descrição (opcional)</label>
+                            <textarea id="new-desc" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="popup-actions">
+                            <button id="cancel-new" class="btn-sm btn-secondary">Cancelar</button>
+                            <button id="save-new" class="btn-sm btn-primary">Salvar</button>
+                        </div>
+                    </div>
+                `)
+                .openOn(map);
+
+            setTimeout(() => {
+                document.getElementById('save-new').addEventListener('click', async function() {
+                    const tipo = document.getElementById('new-type').value.trim() || 'Ar Condicionado';
+                    const defeito = document.getElementById('new-defeito').value.trim() || '';
+                    const local = document.getElementById('new-local').value.trim() || '';
+                    const descricao = document.getElementById('new-desc').value.trim() || '';
+                    try {
+                        const resp = await fetch('/api/pontos', {
+                            method: 'POST',
+                            headers: {'Content-Type':'application/json'},
+                            body: JSON.stringify({ tipo: tipo, defeito: defeito, local: local, latitude: latlng.lat, longitude: latlng.lng, descricao: descricao })
+                        });
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            const markerId = data.id;
+                            var newMarker = createStyledMarker(tipo, latlng).addTo(map);
+                            newMarker.myType = tipo;
+                            newMarker.myDefeito = defeito;
+                            newMarker.myLocal = local;
+                            newMarker.myDescription = descricao;
+                            markers[markerId] = newMarker;
+                            newMarker.bindPopup(createPopupContent(markerId, tipo, defeito, local, descricao));
+                            addMarkerToTable(markerId, tipo, defeito, local, descricao, latlng.lat, latlng.lng);
+                            newMarker.openPopup();
+                            map.closePopup();
+                        } else {
+                            const err = await resp.json();
+                            alert('Erro ao salvar: ' + (err.error||resp.status));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Erro ao salvar ponto.');
+                    }
+                });
+                document.getElementById('cancel-new').addEventListener('click', function() {
+                    map.closePopup();
+                });
+            }, 100);
+        }
+
+        // Cria conteúdo de popup (exibe tipo, defeito, local, descrição e botões)
+        function createPopupContent(markerId, tipo, defeito, local, descricao) {
+            return `
+                <div>
+                    <strong>${escapeHtml(tipo)}</strong><br>
+                    <small>${escapeHtml(defeito)} — ${escapeHtml(local)}</small>
+                    <div style="margin-top:6px;">${escapeHtml(descricao || '')}</div>
+                    <br>
+                    <div class="popup-buttons" onmousedown="L.DomEvent.stopPropagation(event)" onclick="L.DomEvent.stopPropagation(event)">
+                        <button onclick="openEditPopup(${markerId})">Editar</button>
+                        <button onclick="removeMarker(${markerId})">Remover</button>
+                    </div>
                 </div>
             `;
         }
 
-        function editMarker(markerId) {
+        async function removeMarker(markerId) {
             var marker = markers[markerId];
             if (!marker) return;
 
-            var newDescription = prompt("Editar descrição:", marker.myDescription);
-
-            if (newDescription !== null) {
-                marker.myDescription = newDescription;
-                marker.setPopupContent(createPopupContent(markerId, newDescription));
+            try {
+                const response = await fetch('/api/pontos', {
+                    method: 'DELETE',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ id: markerId })
+                });
+                if (response.ok) {
+                    map.removeLayer(marker);
+                    delete markers[markerId];
+                    removeMarkerFromTable(markerId);
+                } else {
+                    const err = await response.json();
+                    alert('Erro ao remover ponto: ' + (err.error||response.status));
+                }
+            } catch (err) {
+                console.error('Erro ao remover ponto:', err);
+                alert('Erro ao remover o ponto');
             }
         }
 
-        function removeMarker(markerId) {
-            var marker = markers[markerId];
-            if (!marker) return;
-            map.removeLayer(marker);
-            delete markers[markerId];
-        }
-
         map.on('click', function(e) {
-            var newMarker = L.marker(e.latlng).addTo(map);
-            var markerId = newMarker._leaflet_id;
-
-            newMarker.myDescription = "Novo Ponto";
-            markers[markerId] = newMarker;
-
-            newMarker.bindPopup(createPopupContent(markerId, newMarker.myDescription));
-            newMarker.openPopup();
+            openCreatePopup(e.latlng);
         });
         
         const setores = [

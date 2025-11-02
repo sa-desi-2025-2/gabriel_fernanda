@@ -87,5 +87,103 @@ def cadastro():
 def solicitacao():   
     return render_template('solicitacao.html')
 
+@app.route('/api/pontos', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def pontos():
+    if 'usuario' not in session:
+        return {'error': 'Não autorizado'}, 401
+
+    try:
+        conexao = conectar_bd()
+        cursor = conexao.cursor(dictionary=True)
+
+        if request.method == 'GET':
+            cursor.execute("SELECT * FROM Ponto")
+            pontos = cursor.fetchall()
+            return {'pontos': pontos}
+
+        elif request.method == 'POST':
+            dados = request.get_json()
+
+            # Validar dados necessários (descricao é opcional)
+            campos_requeridos = ['tipo', 'defeito', 'local', 'latitude', 'longitude']
+            for campo in campos_requeridos:
+                if campo not in dados:
+                    return {'error': f'Campo obrigatório ausente: {campo}'}, 400
+
+            try:
+                # Verificar se o id_mapa 1 existe
+                cursor.execute("SELECT id_mapa FROM Mapa WHERE id_mapa = 1")
+                if not cursor.fetchone():
+                    cursor.execute("INSERT INTO Mapa (id_mapa) VALUES (1)")
+                    conexao.commit()
+
+                cursor.execute("""
+                    INSERT INTO Ponto (tipo, defeito, local, latitude, longitude, descricao, id_mapa) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        dados.get('tipo'),
+                        dados.get('defeito'),
+                        dados.get('local'),
+                        dados.get('latitude'),
+                        dados.get('longitude'),
+                        dados.get('descricao'),
+                        1  # id_mapa padrão
+                    ))
+                conexao.commit()
+                return {'id': cursor.lastrowid}, 201
+            except Error as e:
+                conexao.rollback()
+                print(f"Erro MySQL ao inserir ponto: {str(e)}")
+                return {'error': f'Erro ao inserir ponto: {str(e)}'}, 500
+
+        elif request.method == 'PUT':
+            dados = request.get_json()
+
+            if 'id' not in dados:
+                return {'error': 'Campo id ausente'}, 400
+
+            # Build dynamic update for tipo, defeito, local, descricao
+            campos = []
+            valores = []
+            if 'tipo' in dados:
+                campos.append('tipo = %s')
+                valores.append(dados['tipo'])
+            if 'defeito' in dados:
+                campos.append('defeito = %s')
+                valores.append(dados['defeito'])
+            if 'local' in dados:
+                campos.append('local = %s')
+                valores.append(dados['local'])
+            if 'descricao' in dados:
+                campos.append('descricao = %s')
+                valores.append(dados['descricao'])
+
+            if not campos:
+                return {'error': 'Nenhum campo para atualizar'}, 400
+
+            valores.append(dados['id'])
+            sql = f"UPDATE Ponto SET {', '.join(campos)} WHERE id_ponto = %s"
+            cursor.execute(sql, tuple(valores))
+            conexao.commit()
+            return {'success': True}
+
+        elif request.method == 'DELETE':
+            dados = request.get_json()
+            cursor.execute("DELETE FROM Ponto WHERE id_ponto = %s", (dados['id'],))
+            conexao.commit()
+            return {'success': True}
+
+    except Error as e:
+        print(f"Erro MySQL: {str(e)}")
+        return {'error': str(e)}, 500
+    except Exception as e:
+        print(f"Erro geral: {str(e)}")
+        return {'error': str(e)}, 500
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conexao' in locals():
+            conexao.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

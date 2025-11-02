@@ -44,11 +44,49 @@
 
 #map {
     height: 60vh;
-    width: 90%;
+    width: 100%;
     margin-top: 10px;
-    margin-left: 80px;
+    margin-left: 0;
     border-radius: 20px;
     border: 2px solid #0D436B;
+}
+
+.map-wrapper {
+    position: relative;
+    width: 90%;
+    margin-left: 80px;
+}
+
+.map-legend {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.95);
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 13px;
+    color: #333;
+    z-index: 600;
+}
+.map-legend .legend-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #0D436B;
+}
+.map-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.map-legend .legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid rgba(0,0,0,0.06);
 }
 .popup-buttons button {
     margin: 2px;
@@ -96,4 +134,106 @@
 
 .divSolicitacao{
     width: 600px;
+}
+
+/* Estilos para a tabela de marcadores */
+.markers-table-container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.markers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: "Nunito Sans", sans-serif;
+}
+
+.markers-table th, 
+.markers-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.markers-table th {
+    background-color: #0D436B;
+    color: white;
+    font-weight: bold;
+}
+
+.markers-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.markers-table .actions button {
+    margin: 2px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #0D436B;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.markers-table .actions button:hover {
+    background-color: #1f5c8d;
+}
+
+/* Estilos para formulários dentro dos popups do Leaflet */
+.popup-form {
+    min-width: 220px;
+    max-width: 320px;
+    font-family: "Nunito Sans", sans-serif;
+}
+.popup-form .form-label {
+    font-size: 13px;
+    color: #0D436B;
+    margin-bottom: 4px;
+    display: block;
+}
+.popup-form input[type="text"],
+.popup-form textarea {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 13px;
+    border: 1px solid #cfcfcf;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.popup-form textarea {
+    resize: vertical;
+}
+.popup-form .popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+.popup-form .btn-sm {
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+/* Ajuste dos botões dentro do popup (caso não use Bootstrap) */
+.popup-form .btn-primary {
+    background-color: #0D436B;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+}
+.popup-form .btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+}
+
+/* Tornar o conteúdo do popup um pouco mais agradável */
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
 }
