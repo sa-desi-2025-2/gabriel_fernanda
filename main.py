@@ -33,6 +33,16 @@ CREATE TABLE IF NOT EXISTS Ponto (
   FOREIGN KEY (id_mapa) REFERENCES Mapa(id_mapa)
 );
 
+CREATE TABLE IF NOT EXISTS Solicitacao (
+  id_solicitacao INT PRIMARY KEY AUTO_INCREMENT,
+  usuario VARCHAR(100) NOT NULL,
+  tipo VARCHAR(40) NOT NULL,
+  defeito VARCHAR(120),
+  lugar VARCHAR(120),
+  descricao TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT IGNORE INTO Usuario (nome, email, senha, admin)
 VALUES ('admin', 'admin@email.com', '1234', 1);
 """

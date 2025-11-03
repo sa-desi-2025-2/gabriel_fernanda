@@ -68,6 +68,9 @@
             crossorigin=""></script>
 
     <script>
+        // expose whether current session user is admin (1) or not (0)
+        var IS_ADMIN = {{ 1 if session.get('admin') == 1 else 0 }};
+
         var markers = {};
 
         var bbox = [-48.874741, -26.252951, -48.863078, -26.245706];
@@ -129,8 +132,7 @@
                 <td>${lat.toFixed(6)}</td>
                 <td>${lng.toFixed(6)}</td>
                 <td class="actions">
-                    <button onclick="openEditPopup(${markerId})">Editar</button>
-                    <button onclick="removeMarker(${markerId})">Remover</button>
+                    ${ IS_ADMIN === 1 ? ("<button onclick=\"openEditPopup(" + markerId + ")\">Editar</button><button onclick=\"removeMarker(" + markerId + ")\">Remover</button>") : "<span class='text-muted'>Sem permissão</span>"}
                 </td>
             `;
             tbody.appendChild(row);
@@ -330,8 +332,7 @@
                     <div style="margin-top:6px;">${escapeHtml(descricao || '')}</div>
                     <br>
                     <div class="popup-buttons" onmousedown="L.DomEvent.stopPropagation(event)" onclick="L.DomEvent.stopPropagation(event)">
-                        <button onclick="openEditPopup(${markerId})">Editar</button>
-                        <button onclick="removeMarker(${markerId})">Remover</button>
+                        ${ IS_ADMIN === 1 ? ("<button onclick=\"openEditPopup(" + markerId + ")\">Editar</button><button onclick=\"removeMarker(" + markerId + ")\">Remover</button>") : "<span class='text-muted'>Sem permissão</span>"}
                     </div>
                 </div>
             `;
@@ -362,7 +363,12 @@
         }
 
         map.on('click', function(e) {
-            openCreatePopup(e.latlng);
+            if (IS_ADMIN === 1) {
+                openCreatePopup(e.latlng);
+            } else {
+                // friendly notice for non-admin users
+                alert('Você não tem permissão para adicionar pontos.');
+            }
         });
         
         const setores = [

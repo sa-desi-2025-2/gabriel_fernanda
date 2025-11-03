@@ -83,8 +83,36 @@ def cadastro():
 
     return render_template('cadastro.html')
 
-@app.route('/solicitacao')  
-def solicitacao():   
+@app.route('/solicitacao', methods=['GET', 'POST'])
+def solicitacao():
+    if request.method == 'POST':
+        usuario = request.form.get('usuario', '').strip()
+        tipo = request.form.get('tipo', '').strip()
+        defeito = request.form.get('defeito', '').strip()
+        lugar = request.form.get('lugar', '').strip()
+        descricao = request.form.get('descricao', '').strip()
+
+        if not usuario or not tipo:
+            flash('Nome e tipo são obrigatórios para a solicitação.')
+            return redirect(url_for('solicitacao'))
+
+        try:
+            conexao = conectar_bd()
+            cursor = conexao.cursor()
+            cursor.execute("INSERT INTO Solicitacao (usuario, tipo, defeito, lugar, descricao) VALUES (%s, %s, %s, %s, %s)",
+                           (usuario, tipo, defeito, lugar, descricao))
+            conexao.commit()
+            flash('Solicitação enviada com sucesso!')
+            return redirect(url_for('solicitacao'))
+        except Error as e:
+            flash(f'Erro ao salvar solicitação: {e}')
+        finally:
+            try:
+                cursor.close()
+                conexao.close()
+            except:
+                pass
+
     return render_template('solicitacao.html')
 
 @app.route('/api/pontos', methods=['GET', 'POST', 'PUT', 'DELETE'])
@@ -102,6 +130,10 @@ def pontos():
             return {'pontos': pontos}
 
         elif request.method == 'POST':
+            # Only admins can add new pontos
+            if session.get('admin') != 1:
+                return {'error': 'Não autorizado'}, 403
+
             dados = request.get_json()
 
             # Validar dados necessários (descricao é opcional)
@@ -137,6 +169,10 @@ def pontos():
                 return {'error': f'Erro ao inserir ponto: {str(e)}'}, 500
 
         elif request.method == 'PUT':
+            # Only admins can update pontos
+            if session.get('admin') != 1:
+                return {'error': 'Não autorizado'}, 403
+
             dados = request.get_json()
 
             if 'id' not in dados:
@@ -168,6 +204,10 @@ def pontos():
             return {'success': True}
 
         elif request.method == 'DELETE':
+            # Only admins can delete pontos
+            if session.get('admin') != 1:
+                return {'error': 'Não autorizado'}, 403
+
             dados = request.get_json()
             cursor.execute("DELETE FROM Ponto WHERE id_ponto = %s", (dados['id'],))
             conexao.commit()

@@ -27,8 +27,15 @@
     </nav>
     <div class="divGrandona">      
         <div class="card fonte fonteCinza divSolicitacao">
-            <h2 class="mb-3">Solicitações</h2>
-            <form method="POST" action="{{ url_for('solicitacao') }}">
+                        <h2 class="mb-3">Solicitações</h2>
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <form id="solicitacao-form" method="POST" action="{{ url_for('solicitacao') }}">
                 <div class="mb-3 text-start">
                     <label for="usuario" class="form-label">Nome:</label>
                     <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu usuário">
@@ -36,6 +43,11 @@
                 <div class="mb-3 text-start">
                     <label for="tipo" class="form-label">Tipo:</label>
                     <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Digite o tipo de equipamento">
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label for="defeito" class="form-label">Defeito:</label>
+                    <input type="text" class="form-control" id="defeito" name="defeito" placeholder="Descreva o defeito observado">
                 </div>
 
                 <div class="mb-3 text-start">

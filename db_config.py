@@ -5,7 +5,7 @@ import os
 DB_HOST = 'localhost'
 DB_USER = 'root'
 DB_PASS = 'root' 
-DB_PORT = 3307
+DB_PORT = 3306
 DB_NAME = 'mapainterativo'
 
 def conectar_bd():
