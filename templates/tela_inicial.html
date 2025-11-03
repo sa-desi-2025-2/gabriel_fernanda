@@ -33,7 +33,6 @@
     <div class="map-wrapper">
         <div id="map"></div>
 
-        <!-- Legenda de tipos -->
         <div class="map-legend" id="map-legend">
             <div class="legend-title">Legenda</div>
             <div class="legend-item"><span class="legend-color" style="background:#0D436B"></span> Ar Condicionado</div>
@@ -41,7 +40,6 @@
         </div>
     </div>
 
-    <!-- Tabela de Marcadores -->
     <div class="markers-table-container">
         <h3>Pontos no Mapa</h3>
         <table class="markers-table">
@@ -58,7 +56,6 @@
                 </tr>
             </thead>
             <tbody id="markers-tbody">
-                <!-- Os marcadores serão adicionados aqui dinamicamente -->
             </tbody>
         </table>
     </div>
@@ -68,7 +65,6 @@
             crossorigin=""></script>
 
     <script>
-        // expose whether current session user is admin (1) or not (0)
         var IS_ADMIN = {{ 1 if session.get('admin') == 1 else 0 }};
 
         var markers = {};
@@ -93,7 +89,6 @@
 
         L.rectangle(bounds, {color: "#0D436B", weight: 2, fillOpacity: 0.0}).addTo(map);
 
-        // Carregar pontos do banco de dados
         async function carregarPontos() {
             try {
                 const response = await fetch('/api/pontos');
@@ -116,7 +111,6 @@
             }
         }
 
-        // Chamar função de carregamento quando a página carregar
         carregarPontos();
 
         function addMarkerToTable(markerId, type, defeito, local, description, lat, lng) {
@@ -138,15 +132,13 @@
             tbody.appendChild(row);
         }
 
-        // Retorna cor por tipo
         function getColorForType(tipo) {
             if (!tipo) return '#0D436B';
-            if (tipo.toLowerCase().includes('ar')) return '#0D436B'; // Ar Condicionado -> azul
-            if (tipo.toLowerCase().includes('bebed')) return '#1f9d4a'; // Bebedouro -> verde
-            return '#6c757d'; // padrão cinza
+            if (tipo.toLowerCase().includes('ar')) return '#0D436B'; 
+            if (tipo.toLowerCase().includes('bebed')) return '#1f9d4a'; 
+            return '#6c757d'; 
         }
 
-        // Cria um circleMarker estilizado com cor baseada no tipo
         function createStyledMarker(tipo, latlng) {
             const color = getColorForType(tipo);
             return L.circleMarker(latlng, {
@@ -182,7 +174,6 @@
             return text.toString().replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m];});
         }
 
-        // Abre um popup de edição com formulário para nome, tipo e descrição
         function openEditPopup(markerId) {
             var marker = markers[markerId];
             if (!marker) return;
@@ -250,7 +241,6 @@
             }, 100);
         }
 
-        // Abre um popup de criação com formulário e salva no servidor ao enviar
         function openCreatePopup(latlng) {
             var popup = L.popup()
                 .setLatLng(latlng)
@@ -323,7 +313,6 @@
             }, 100);
         }
 
-        // Cria conteúdo de popup (exibe tipo, defeito, local, descrição e botões)
         function createPopupContent(markerId, tipo, defeito, local, descricao) {
             return `
                 <div>
@@ -366,7 +355,6 @@
             if (IS_ADMIN === 1) {
                 openCreatePopup(e.latlng);
             } else {
-                // friendly notice for non-admin users
                 alert('Você não tem permissão para adicionar pontos.');
             }
         });

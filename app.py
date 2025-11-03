@@ -130,20 +130,17 @@ def pontos():
             return {'pontos': pontos}
 
         elif request.method == 'POST':
-            # Only admins can add new pontos
             if session.get('admin') != 1:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
 
-            # Validar dados necessários (descricao é opcional)
             campos_requeridos = ['tipo', 'defeito', 'local', 'latitude', 'longitude']
             for campo in campos_requeridos:
                 if campo not in dados:
                     return {'error': f'Campo obrigatório ausente: {campo}'}, 400
 
             try:
-                # Verificar se o id_mapa 1 existe
                 cursor.execute("SELECT id_mapa FROM Mapa WHERE id_mapa = 1")
                 if not cursor.fetchone():
                     cursor.execute("INSERT INTO Mapa (id_mapa) VALUES (1)")
@@ -159,7 +156,7 @@ def pontos():
                         dados.get('latitude'),
                         dados.get('longitude'),
                         dados.get('descricao'),
-                        1  # id_mapa padrão
+                        1  
                     ))
                 conexao.commit()
                 return {'id': cursor.lastrowid}, 201
@@ -169,7 +166,6 @@ def pontos():
                 return {'error': f'Erro ao inserir ponto: {str(e)}'}, 500
 
         elif request.method == 'PUT':
-            # Only admins can update pontos
             if session.get('admin') != 1:
                 return {'error': 'Não autorizado'}, 403
 
@@ -178,7 +174,6 @@ def pontos():
             if 'id' not in dados:
                 return {'error': 'Campo id ausente'}, 400
 
-            # Build dynamic update for tipo, defeito, local, descricao
             campos = []
             valores = []
             if 'tipo' in dados:
@@ -204,7 +199,6 @@ def pontos():
             return {'success': True}
 
         elif request.method == 'DELETE':
-            # Only admins can delete pontos
             if session.get('admin') != 1:
                 return {'error': 'Não autorizado'}, 403
 

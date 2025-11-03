@@ -136,7 +136,6 @@
     width: 600px;
 }
 
-/* Estilos para a tabela de marcadores */
 .markers-table-container {
     width: 90%;
     margin: 20px auto;
@@ -184,7 +183,6 @@
     background-color: #1f5c8d;
 }
 
-/* Estilos para formulários dentro dos popups do Leaflet */
 .popup-form {
     min-width: 220px;
     max-width: 320px;
@@ -219,7 +217,6 @@
     font-size: 13px;
 }
 
-/* Ajuste dos botões dentro do popup (caso não use Bootstrap) */
 .popup-form .btn-primary {
     background-color: #0D436B;
     color: #fff;
@@ -233,7 +230,6 @@
     border-radius: 6px;
 }
 
-/* Tornar o conteúdo do popup um pouco mais agradável */
 .leaflet-popup-content-wrapper {
     border-radius: 10px;
 }

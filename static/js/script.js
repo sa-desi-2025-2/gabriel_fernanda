@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 	function showFormError(form, msg) {
 		if (!form) return;
-		// Remove existing generic error
 		var existing = form.querySelector('.form-error');
 		if (existing) existing.remove();
 
@@ -9,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		div.className = 'alert alert-danger form-error';
 		div.setAttribute('role', 'alert');
 		div.textContent = msg;
-		// insert as first child in card (if present) or before form
 		var card = form.closest('.card');
 		if (card) card.insertBefore(div, card.firstChild);
 		else form.insertBefore(div, form.firstChild);
@@ -23,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 
-	// Login form validation
 	var loginForm = document.getElementById('login-form');
 	if (loginForm) {
 		clearFormErrorOnInput(loginForm);
@@ -39,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 
-	// Cadastro form validation
 	var cadastroForm = document.getElementById('cadastro-form');
 	if (cadastroForm) {
 		clearFormErrorOnInput(cadastroForm);
@@ -65,12 +61,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// Expose helper for debugging
 window.__showFormError = function(formSelector, msg) {
 	var form = document.querySelector(formSelector);
 	if (!form) return;
 	var evt = new Event('submit', { bubbles: true, cancelable: true });
-	// show message directly
 	var div = document.createElement('div');
 	div.className = 'alert alert-danger';
 	div.textContent = msg;
