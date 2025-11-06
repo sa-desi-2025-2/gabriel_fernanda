@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
+    <title>Solicitação</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="../static/css/style.css">
@@ -28,13 +28,6 @@
     <div class="divGrandona">      
         <div class="card fonte fonteCinza divSolicitacao">
                         <h2 class="mb-3">Solicitações</h2>
-                        {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class="alert alert-info" role="alert">{{ message }}</div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
                         <form id="solicitacao-form" method="POST" action="{{ url_for('solicitacao') }}">
                 <div class="mb-3 text-start">
                     <label for="usuario" class="form-label">Nome:</label>
@@ -42,7 +35,10 @@
                 </div>
                 <div class="mb-3 text-start">
                     <label for="tipo" class="form-label">Tipo:</label>
-                    <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Digite o tipo de equipamento">
+                    <select  class="form-select" nome="tipo" id="tipo">
+                        <option value="arCondicionado">Ar Condicionado</option>
+                        <option value="bebedouro">Bebedouro</option>
+                    </select>
                 </div>
 
                 <div class="mb-3 text-start">
@@ -51,8 +47,8 @@
                 </div>
 
                 <div class="mb-3 text-start">
-                    <label for="lugar" class="form-label">Lugar:</label>
-                    <input type="text" class="form-control" id="lugar" name="lugar" placeholder="Digite o lugar">
+                    <label for="lugar" class="form-label">Local:</label>
+                    <input type="text" class="form-control" id="lugar" name="lugar" placeholder="Digite o local">
                 </div>
 
                 <div class="mb-3 text-start">
