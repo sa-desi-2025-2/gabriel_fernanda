@@ -109,8 +109,7 @@ def solicitacao():
         try:
             conexao = conectar_bd()
             cursor = conexao.cursor()
-            cursor.execute("INSERT INTO Solicitacao (usuario, tipo, defeito, lugar, descricao) VALUES (%s, %s, %s, %s, %s)",
-                           (usuario, tipo, defeito, lugar, descricao))
+            cursor.execute("INSERT INTO Solicitacao (usuario, tipo, defeito, lugar, descricao) VALUES (%s, %s, %s, %s, %s)",(usuario, tipo, defeito, lugar, descricao))
             conexao.commit()
             flash('Solicitação enviada com sucesso!')
             return redirect(url_for('solicitacao'))
