@@ -44,6 +44,16 @@ def login():
 def tela_inicial():   
     return render_template('tela_inicial.html')
 
+@app.route('/solicitacao_admin')  
+def solicitacao_admin():   
+    return render_template('solicitacao_admin.html')
+
+@app.route('/logout')
+def logout():
+    session.clear() 
+    flash('Logout realizado com sucesso!')
+    return redirect(url_for('login')) 
+
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
