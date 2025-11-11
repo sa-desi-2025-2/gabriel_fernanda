@@ -44,10 +44,6 @@ def login():
 def tela_inicial():   
     return render_template('tela_inicial.html')
 
-@app.route('/solicitacao_admin')  
-def solicitacao_admin():   
-    return render_template('solicitacao_admin.html')
-
 @app.route('/logout')
 def logout():
     session.clear() 
@@ -123,6 +119,23 @@ def solicitacao():
                 pass
 
     return render_template('solicitacao.html')
+
+@app.route('/solicitacao_admin')
+def solicitacao_admin():
+    try:
+        conexao = conectar_bd()
+        cursor = conexao.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Solicitacao")
+        solicitacoes = cursor.fetchall()
+        return render_template('solicitacao_admin.html', solicitacoes=solicitacoes)
+    except Error as e:
+        return f"Erro ao carregar solicitações: {e}"
+    finally:
+        try:
+            cursor.close()
+            conexao.close()
+        except:
+            pass
 
 @app.route('/api/pontos', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def pontos():

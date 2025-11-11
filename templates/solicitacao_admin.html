@@ -29,17 +29,20 @@
         <h3>Solicitações</h3>
         <table class="markers-table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Solicitante</th>
-                    <th>Tipo</th>
-                    <th>Defeito</th>
-                    <th>Local</th>
-                    <th>Descrição</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="markers-tbody">
+                <tbody>
+                    {% for s in solicitacoes %}
+                    <tr>
+                        <td>{{ s.id_solicitacao }}</td>
+                        <td>{{ s.usuario }}</td>
+                        <td>{{ s.tipo }}</td>
+                        <td>{{ s.defeito }}</td>
+                        <td>{{ s.lugar }}</td>
+                        <td>{{ s.descricao }}</td>
+                        <td>Em análise</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
             </tbody>
         </table>
     </div>
