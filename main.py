@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS Solicitacao (
   id_solicitacao INT PRIMARY KEY AUTO_INCREMENT,
   usuario VARCHAR(100) NOT NULL,
   tipo VARCHAR(40) NOT NULL,
-  defeito VARCHAR(120),
-  lugar VARCHAR(120),
+  defeito VARCHAR(120) NOT NULL,
+  lugar VARCHAR(120) NOT NULL,
   descricao TEXT,
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

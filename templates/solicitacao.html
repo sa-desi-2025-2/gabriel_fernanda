@@ -17,7 +17,7 @@
             </svg>
             <div class="linksNav">
                 <a class="nav-link" href="{{ url_for('tela_inicial') }}">Início</a>
-                <a class="nav-link" href="#">Solicitações</a>
+                <a class="nav-link" href="#">Solicitação</a>
                 <a class="nav-link" href="{{ url_for('login') }}">Fazer Logout</a>
             </div>
             <a class="navbar-brand ms-auto" href="{{ url_for('tela_inicial') }}">
@@ -28,6 +28,13 @@
     <div class="divGrandona">      
         <div class="card fonte fonteCinza divSolicitacao">
                         <h2 class="mb-3">Solicitações</h2>
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-info" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                         <form id="solicitacao-form" method="POST" action="{{ url_for('solicitacao') }}">
                 <div class="mb-3 text-start">
                     <label for="usuario" class="form-label">Nome:</label>
@@ -40,10 +47,9 @@
                         <option value="bebedouro">Bebedouro</option>
                     </select>
                 </div>
-
                 <div class="mb-3 text-start">
                     <label for="defeito" class="form-label">Defeito:</label>
-                    <input type="text" class="form-control" id="defeito" name="defeito" placeholder="Descreva o defeito observado">
+                    <input type="text" class="form-control" id="defeito" name="defeito" placeholder="Descreva o defeito observado" required>
                 </div>
 
                 <div class="mb-3 text-start">
@@ -52,7 +58,7 @@
                 </div>
 
                 <div class="mb-3 text-start">
-                    <label for="descricao" class="form-label">Descrição:</label>
+                    <label for="descricao" class="form-label">Descrição (Opcional):</label>
                     <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Digite a descrição">
                 </div>
 

@@ -102,10 +102,24 @@ def solicitacao():
         lugar = request.form.get('lugar', '').strip()
         descricao = request.form.get('descricao', '').strip()
 
-        if not usuario or not tipo:
-            flash('Nome e tipo são obrigatórios para a solicitação.')
-            return redirect(url_for('solicitacao'))
+        campos_vazios = []
+        if not usuario:
+            campos_vazios.append('nome')
+        if not defeito:
+            campos_vazios.append('defeito')
+        if not lugar:
+            campos_vazios.append('local')
 
+        if campos_vazios:
+
+            if len(campos_vazios) == 1:
+                msg = f"O campo {campos_vazios[0]} é obrigatório!"
+            else:
+                lista = ', '.join(campos_vazios[:-1]) + ' e ' + campos_vazios[-1]
+                msg = f"Os campos {lista} são obrigatórios!"
+            flash(msg, 'error')
+            return redirect(url_for('solicitacao'))
+        
         try:
             conexao = conectar_bd()
             cursor = conexao.cursor()
