@@ -30,6 +30,15 @@
         <table class="markers-table">
             <thead>
                 <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <th>Solicitante</th>
+                        <th>Tipo</th>
+                        <th>Defeito</th>
+                        <th>Local</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                    </tr>    
                     {% for s in solicitacoes %}
                     <tr>
                         <td>{{ s.id_solicitacao }}</td>
