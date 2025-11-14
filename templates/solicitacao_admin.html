@@ -47,9 +47,18 @@
                         <td>{{ s.defeito }}</td>
                         <td>{{ s.lugar }}</td>
                         <td>{{ s.descricao }}</td>
-                        <td>Em análise</td>
+                        <td>
+                            {% if s.status != 'Finalizada' %}
+                            <form action="{{ url_for('finalizar_solicitacao', id=s.id_solicitacao) }}" method="POST">
+                                <button class="btn btn-success btn-sm">Finalizar</button>
+                            </form>
+                            {% else %}
+                            <span class="text-success fw-bold">✔ Finalizada</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
+                    
                 </tbody>
                 
             </tbody>

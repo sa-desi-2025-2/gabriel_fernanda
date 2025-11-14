@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS Solicitacao (
   defeito VARCHAR(120) NOT NULL,
   lugar VARCHAR(120) NOT NULL,
   descricao TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'Em análise',
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -151,6 +151,29 @@ def solicitacao_admin():
         except:
             pass
 
+@app.route('/finalizar_solicitacao/<int:id>', methods=['POST'])
+def finalizar_solicitacao(id):
+    if session.get('admin') != 1:
+        flash("Apenas administradores podem fazer isso.")
+        return redirect(url_for('solicitacao_admin'))
+
+    try:
+        conexao = conectar_bd()
+        cursor = conexao.cursor()
+
+        cursor.execute("UPDATE Solicitacao SET status = 'Finalizada' WHERE id_solicitacao = %s", (id,))
+        conexao.commit()
+
+        flash("Solicitação finalizada com sucesso!")
+    except Error as e:
+        flash(f"Erro ao atualizar status: {e}")
+    finally:
+        cursor.close()
+        conexao.close()
+
+    return redirect(url_for('solicitacao_admin'))
+
+
 @app.route('/api/pontos', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def pontos():
     if 'usuario' not in session:
