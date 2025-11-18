@@ -22,10 +22,14 @@
             <div class="linksNav">
                 <a class="nav-link" href="{{ url_for('tela_inicial') }}">Início</a>
                 
-                {% if 'usuario' in session and session.admin == 1 %}
+                {% if 'usuario' in session and session.admin == 1 or session.admin == 2 %}
                     <a class="nav-link" href="{{ url_for('solicitacao_admin') }}">Solicitações</a>
                 {% else %}
                     <a class="nav-link" href="{{ url_for('solicitacao') }}">Solicitação</a>
+                {% endif %}
+
+                {% if 'usuario' in session and session.admin == 2 %}
+                    <a class="nav-link" href="{{ url_for('permissao') }}">Permissões</a>
                 {% endif %}
                 
                 <a class="nav-link" href="{{ url_for('logout') }}">Fazer Logout</a>
@@ -71,7 +75,8 @@
             crossorigin=""></script>
 
     <script>
-        var IS_ADMIN = {{ 1 if session.get('admin') == 1 else 0 }};
+        var IS_ADMIN = {{ 1 if session.get('admin') in [1, 2] else 0 }};
+
 
         var markers = {};
 

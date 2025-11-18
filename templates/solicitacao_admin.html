@@ -18,6 +18,9 @@
             <div class="linksNav">
                 <a class="nav-link" href="{{ url_for('tela_inicial') }}">Início</a>
                 <a class="nav-link" href="#">Solicitações</a>
+                {% if 'usuario' in session and session.admin == 2 %}
+                    <a class="nav-link" href="{{ url_for('permissao') }}">Permissões</a>
+                {% endif %}
                 <a class="nav-link" href="{{ url_for('login') }}">Fazer Logout</a>
             </div>
             <a class="navbar-brand ms-auto" href="{{ url_for('tela_inicial') }}">

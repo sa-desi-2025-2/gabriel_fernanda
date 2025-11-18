@@ -46,6 +46,9 @@ CREATE TABLE IF NOT EXISTS Solicitacao (
 
 INSERT IGNORE INTO Usuario (nome, email, senha, admin)
 VALUES ('admin', 'admin@email.com', '1234', 1);
+
+INSERT IGNORE INTO Usuario (nome, email, senha, admin)
+VALUES ('master', 'master@email.com', '123', 2);
 """
 
     try:

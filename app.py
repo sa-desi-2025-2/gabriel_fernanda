@@ -151,6 +151,47 @@ def solicitacao_admin():
         except:
             pass
 
+@app.route('/permissao')
+def permissao():
+    if session.get('admin') != 2:
+        flash("Apenas administradores MASTER podem acessar essa área.")
+        return redirect(url_for('tela_inicial'))
+
+    try:
+        conexao = conectar_bd()
+        cursor = conexao.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Usuario")
+        usuarios = cursor.fetchall()
+        return render_template('permissao.html', usuarios=usuarios)
+    except Error as e:
+        return f"Erro ao carregar usuários: {e}"
+    finally:
+        try:
+            cursor.close()
+            conexao.close()
+        except:
+            pass
+
+@app.route('/atualizar_permissao/<int:id_usuario>', methods=['POST'])
+def atualizar_permissao(id_usuario):
+
+    nova_permissao = request.form.get('admin')
+
+    try:
+        conexao = conectar_bd()
+        cursor = conexao.cursor()
+        cursor.execute("UPDATE Usuario SET admin = %s WHERE id_usuario = %s", (nova_permissao, id_usuario))
+        conexao.commit()
+        flash("Permissão atualizada!")
+    except Error as e:
+        flash(f"Erro ao atualizar permissão: {e}")
+    finally:
+        cursor.close()
+        conexao.close()
+
+    return redirect(url_for('permissao'))
+
+
 @app.route('/finalizar_solicitacao/<int:id>', methods=['POST'])
 def finalizar_solicitacao(id):
     if session.get('admin') != 1:
@@ -189,7 +230,7 @@ def pontos():
             return {'pontos': pontos}
 
         elif request.method == 'POST':
-            if session.get('admin') != 1:
+            if session.get('admin') == 1:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
