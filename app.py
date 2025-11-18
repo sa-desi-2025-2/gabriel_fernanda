@@ -194,7 +194,7 @@ def atualizar_permissao(id_usuario):
 
 @app.route('/finalizar_solicitacao/<int:id>', methods=['POST'])
 def finalizar_solicitacao(id):
-    if session.get('admin') != 1:
+    if session.get('admin') == 0:
         flash("Apenas administradores podem fazer isso.")
         return redirect(url_for('solicitacao_admin'))
 
@@ -230,7 +230,7 @@ def pontos():
             return {'pontos': pontos}
 
         elif request.method == 'POST':
-            if session.get('admin') == 1:
+            if session.get('admin') == 0:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
