@@ -266,7 +266,7 @@ def pontos():
                 return {'error': f'Erro ao inserir ponto: {str(e)}'}, 500
 
         elif request.method == 'PUT':
-            if session.get('admin') != 1:
+            if session.get('admin') == 0:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
@@ -299,7 +299,7 @@ def pontos():
             return {'success': True}
 
         elif request.method == 'DELETE':
-            if session.get('admin') != 1:
+            if session.get('admin') == 0:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
