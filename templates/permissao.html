@@ -19,7 +19,7 @@
             <div class="linksNav">
                 <a class="nav-link" href="{{ url_for('tela_inicial') }}">Início</a>
                 
-                {% if 'usuario' in session and session.admin == 1 %}
+                {% if 'usuario' in session and session.admin == 1 or session.admin == 2 %}
                     <a class="nav-link" href="{{ url_for('solicitacao_admin') }}">Solicitações</a>
                 {% else %}
                     <a class="nav-link" href="{{ url_for('solicitacao') }}">Solicitação</a>
