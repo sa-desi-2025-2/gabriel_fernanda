@@ -38,6 +38,16 @@
     border-color: #1f5c8d;
 }
 
+.botao{
+    background-color:#0D436B;
+    border-color: #0D436B;
+}
+
+.botao:hover {
+    background-color:#1f5c8d;
+    border-color: #1f5c8d;
+}
+
 .fontCinza{
     color: #484949;
 }

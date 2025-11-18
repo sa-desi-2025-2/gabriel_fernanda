@@ -18,18 +18,13 @@
             </svg>
             <div class="linksNav">
                 <a class="nav-link" href="{{ url_for('tela_inicial') }}">Início</a>
-                
-                {% if 'usuario' in session and session.admin == 1 or session.admin == 2 %}
-                    <a class="nav-link" href="{{ url_for('solicitacao_admin') }}">Solicitações</a>
-                {% else %}
-                    <a class="nav-link" href="{{ url_for('solicitacao') }}">Solicitação</a>
-                {% endif %}
+                <a class="nav-link" href="{{ url_for('solicitacao_admin') }}">Solicitações</a>
 
                 {% if 'usuario' in session and session.admin == 2 %}
                     <a class="nav-link" href="#">Permissões</a>
                 {% endif %}
                 
-                <a class="nav-link" href="{{ url_for('logout') }}">Fazer Logout</a>
+                <a class="nav-link" href="{{ url_for('logout') }}">Sair</a>
             </div>
             <a class="navbar-brand ms-auto" href="#">
                 <img src="../static/img/logo.png" alt="Logo" width="100" height="30" class="d-inline-block align-text-top">
@@ -37,10 +32,10 @@
         </div>
     </nav>
 
-<div class="container mt-4">
+<div class="markers-table-container">
     <h3>Gerenciamento de Permissões</h3>
 
-    <table class="table table-striped mt-3">
+    <table class="markers-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -65,7 +60,7 @@
                         </select>
                 </td>
                 <td>
-                        <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                        <button type="submit" class="btn btn-primary btn-sm botao">Salvar</button>
                     </form>
                 </td>
             </tr>
