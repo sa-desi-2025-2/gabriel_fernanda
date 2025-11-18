@@ -230,7 +230,7 @@ def pontos():
             return {'pontos': pontos}
 
         elif request.method == 'POST':
-            if session.get('admin') == 1:
+            if session.get('admin') == 0:
                 return {'error': 'Não autorizado'}, 403
 
             dados = request.get_json()
